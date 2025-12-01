@@ -82,6 +82,11 @@
       :items="filteredCampaigns"
       item-value="Id"
       class="elevation-1"
+      :items-per-page-options="[
+        { value: 10, title: '10' },
+        { value: 25, title: '25' },
+        { value: 50, title: '50' },
+        { value: 100, title: '100' },]"
     >
       <template #item.Status="{ item }">
         {{ statusLabels[item.Status] ?? item.Status }}
@@ -346,102 +351,101 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- ФОРМА СОЗДАНИЯ КАМПАНИИ -->
     <v-dialog v-model="dialogView" max-width="900px" scrollable>
-    <v-card>
-      
-      <v-btn
-        icon="mdi-close"
-        variant="text"
-        class="position-absolute"
-        style="top: 8px; right: 8px; z-index: 10;"
-        @click="dialogView = false"
-      />
+      <v-card>
+        
+        <v-btn
+          icon="mdi-close"
+          variant="text"
+          class="position-absolute"
+          style="top: 8px; right: 8px; z-index: 10;"
+          @click="dialogView = false"
+        />
 
-      <v-card-title class="text-h6 pr-12">
-        Детали кампании
-      </v-card-title>
+        <v-card-title class="text-h6 pr-12">
+          Детали кампании
+        </v-card-title>
 
-      <v-card-text v-if="selectedCampaign">
-        <v-list density="comfortable">
+        <v-card-text v-if="selectedCampaign">
+          <v-list density="comfortable">
 
-          <v-list-item>
-            <v-list-item-title><strong>ID:</strong> {{ selectedCampaign.Id }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>ID:</strong> {{ selectedCampaign.Id }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>Name:</strong> {{ selectedCampaign.Name }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>Name:</strong> {{ selectedCampaign.Name }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>Region:</strong> {{ selectedCampaign.Region }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>Region:</strong> {{ selectedCampaign.Region }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>RecipientSource:</strong> {{ selectedCampaign.RecipientSource }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>RecipientSource:</strong> {{ selectedCampaign.RecipientSource }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>TotalToSend:</strong> {{ selectedCampaign.TotalToSend }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>TotalToSend:</strong> {{ selectedCampaign.TotalToSend }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>DailyLimit:</strong> {{ selectedCampaign.DailyLimit }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>DailyLimit:</strong> {{ selectedCampaign.DailyLimit }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>Status:</strong> {{ statusLabels[selectedCampaign.Status] }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>Status:</strong> {{ statusLabels[selectedCampaign.Status] }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>StartDate:</strong> {{ formatDate(selectedCampaign.StartDate) }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>StartDate:</strong> {{ formatDate(selectedCampaign.StartDate) }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>EndDate:</strong> {{ formatDate(selectedCampaign.EndDate) }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>EndDate:</strong> {{ formatDate(selectedCampaign.EndDate) }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>CreatedAt:</strong> {{ formatDate(selectedCampaign.CreatedAt) }}</v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>CreatedAt:</strong> {{ formatDate(selectedCampaign.CreatedAt) }}</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title>
-              <strong>Bodies:</strong>
-              <div class="mt-2">
-                <div
-                  v-for="(b,i) in selectedCampaign.Bodies"
-                  :key="i"
-                  class="pa-2 mb-2 rounded bg-grey-lighten-4"
-                  style="white-space: pre-wrap; line-height: 1.4;"
-                >
-                  {{ b }}
+            <v-list-item>
+              <v-list-item-title>
+                <strong>Bodies:</strong>
+                <div class="mt-2">
+                  <div
+                    v-for="(b,i) in selectedCampaign.Bodies"
+                    :key="i"
+                    class="pa-2 mb-2 rounded bg-grey-lighten-4"
+                    style="white-space: pre-wrap; line-height: 1.4;"
+                  >
+                    {{ b }}
+                  </div>
                 </div>
-              </div>
-            </v-list-item-title>
-          </v-list-item>
+              </v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title><strong>Flags:</strong></v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title><strong>Flags:</strong></v-list-item-title>
+            </v-list-item>
 
-          <v-list-item>
-            <v-list-item-title>
-              OnlyDeliverable: <strong>{{ selectedCampaign.OnlyDeliverable }}</strong><br />
-              OnlyNotSend: <strong>{{ selectedCampaign.OnlyNotSend }}</strong><br />
-              OnlyNotClicked: <strong>{{ selectedCampaign.OnlyNotClicked }}</strong><br />
-              OnlyClicked: <strong>{{ selectedCampaign.OnlyClicked }}</strong><br />
-              DoubleOptIn: <strong>{{ selectedCampaign.DoubleOptIn }}</strong>
-            </v-list-item-title>
-          </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                OnlyDeliverable: <strong>{{ selectedCampaign.OnlyDeliverable }}</strong><br />
+                OnlyNotSend: <strong>{{ selectedCampaign.OnlyNotSend }}</strong><br />
+                OnlyNotClicked: <strong>{{ selectedCampaign.OnlyNotClicked }}</strong><br />
+                OnlyClicked: <strong>{{ selectedCampaign.OnlyClicked }}</strong><br />
+                DoubleOptIn: <strong>{{ selectedCampaign.DoubleOptIn }}</strong>
+              </v-list-item-title>
+            </v-list-item>
 
-        </v-list>
-      </v-card-text>
+          </v-list>
+        </v-card-text>
 
-      <v-card-actions class="justify-end">
-        <v-btn variant="text" @click="dialogView = false">Закрыть</v-btn>
-      </v-card-actions>
-    </v-card>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="dialogView = false">Закрыть</v-btn>
+        </v-card-actions>
+      </v-card>
   </v-dialog>
 
   </v-container>
