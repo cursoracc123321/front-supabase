@@ -8,12 +8,18 @@
       color="primary"
       dark
     >
-      <v-toolbar-title>Панель администратора</v-toolbar-title>
 
       <v-spacer />
 
-      <v-btn to="/accounts" variant="text">Аккаунты</v-btn>
-      <v-btn to="/campaigns" variant="text">Кампании</v-btn>
+      <!-- Центр -->
+      <div class="d-flex justify-center" style="flex: 1">
+        <v-btn to="/accounts" variant="text" class="mx-2">Аккаунты</v-btn>
+        <v-btn to="/campaigns" variant="text" class="mx-2">Кампании</v-btn>
+      </div>
+
+      <v-spacer />
+
+      <!-- Справа -->
       <v-btn @click="logout" variant="text">Выйти</v-btn>
     </v-app-bar>
 

@@ -4,6 +4,7 @@
     <div class="d-flex flex-column mb-4">
       <v-switch
         v-model="filterEnabled"
+        :color="filterEnabled ? 'green' : 'grey'"
         label="Показать только включённые аккаунты"
       />
 
@@ -113,11 +114,13 @@
             <v-switch
               label="IsEnabled"
               v-model="editedAccount.IsEnabled"
+              :color="editedAccount.IsEnabled ? 'green' : 'grey'"
               class="mb-2"
             />
             <v-switch
               label="OnWhiteSending"
               v-model="editedAccount.OnWhiteSending"
+              :color="editedAccount.OnWhiteSending ? 'green' : 'grey'"
               class="mb-2"
             />
           </v-form>
