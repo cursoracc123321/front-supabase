@@ -9,3 +9,7 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 `npm install vue-router@4`
 `npm install @supabase/supabase-js`
 `npm install @mdi/font`
+
+For using need to
+1. Change data in /src/supabase.js
+2. `npm run dev`
