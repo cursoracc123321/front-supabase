@@ -15,6 +15,8 @@
       <div class="d-flex justify-center" style="flex: 1">
         <v-btn to="/accounts" variant="text" class="mx-2">Аккаунты</v-btn>
         <v-btn to="/campaigns" variant="text" class="mx-2">Кампании</v-btn>
+        <v-btn to="/vps" variant="text">VPS</v-btn>
+        <v-btn to="/smtp-servers" variant="text">SMTP</v-btn>
       </div>
 
       <v-spacer />
