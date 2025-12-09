@@ -1,14 +1,21 @@
 <!-- src/views/VpsServers.vue -->
 <template>
   <v-container>
-    <h2 class="mb-4">VPS сервера</h2>
+    <div class="d-flex flex-column mb-4">
+      <v-switch
+        v-model="filterEnabled"
+        :color="filterEnabled ? 'green' : 'grey'"
+        label="Show only enabled accounts"
+      />
+    </div>
 
     <v-data-table
       :headers="headers"
-      :items="servers"
+      :items="filteredServers"
       item-value="Id"
-      class="elevation-1"
+      class="elevation-1 fixed-table"
       :items-per-page-options="[10, 25, 50, 100]"
+      v-model:sort-by="sortBy"
     >
       <!-- ВКЛ/ВЫКЛ сервера -->
       <template #item.IsEnabled="{ item }">
@@ -80,20 +87,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed  } from 'vue'
 import { supabase } from '@/supabase'
 
 const servers = ref([])
 
 const headers = [
-  { title: 'ID', value: 'Id' },
-  { title: 'User (логин)', value: 'User' },
-  { title: 'Password', value: 'Password' },
-  { title: 'Hoster', value: 'Hoster' },
-  { title: 'Region', value: 'Region' },
-  { title: 'Health', value: 'HealthStatus' },
-  { title: 'LastHealthCheck', value: 'LastHealthCheck' },
-  { title: 'IsEnabled', value: 'IsEnabled' },
+  { title: 'ID', key: 'Id', maxWidth: "5vw"},
+  { title: 'User (логин)', key: 'User', maxWidth: "10vw" },
+  { title: 'Password', key: 'Password' },
+  { title: 'Hoster', key: 'Hoster', maxWidth: "5vw" },
+  { title: 'Region', key: 'Region', maxWidth: "2vw"  },
+  { title: 'Health', key: 'HealthStatus', maxWidth: "5vw" },
+  { title: 'LastHealthCheck', key: 'LastHealthCheck' },
+  { title: 'IsEnabled', key: 'IsEnabled' },
 ]
 
 const snackbar = ref({
@@ -155,6 +162,14 @@ const formatDate = (val) => {
   if (Number.isNaN(d.getTime())) return String(val)
   return d.toLocaleString()
 }
+
+const sortBy = ref([{ key: 'HealthStatus', order: 'desc' }])
+
+const filterEnabled = ref(true)
+const filteredServers = computed(() => {
+  if (!filterEnabled.value) return servers.value
+  return servers.value.filter(s => s.IsEnabled)
+})
 
 const maskPassword = (password) => {
   if (!password) return '••••••'

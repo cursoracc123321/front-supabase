@@ -5,16 +5,8 @@
       <v-switch
         v-model="filterEnabled"
         :color="filterEnabled ? 'green' : 'grey'"
-        label="Показать только включённые аккаунты"
+        label="Show only enabled accounts"
       />
-
-      <v-btn
-        class="mt-2"
-        variant="outlined"
-        @click="groupByHost = !groupByHost"
-      >
-        {{ groupByHost ? 'Убрать группировку по Host' : 'Группировать по Host' }}
-      </v-btn>
     </div>
 
     <v-data-table
@@ -22,12 +14,13 @@
       :items="displayedAccounts"
       :row-props="rowProps"
       item-value="Id"
-      class="elevation-1"
+      class="elevation-1 fixed-table"
       :items-per-page-options="[
         { value: 10, title: '10' },
         { value: 25, title: '25' },
         { value: 50, title: '50' },
         { value: 100, title: '100' },]"
+      v-model:sort-by="sortBy"
     >
       <!-- переключатель IsEnabled -->
       <template #item.IsEnabled="{ item }">
@@ -55,7 +48,7 @@
     <v-dialog v-model="editDialog" max-width="600">
       <v-card>
         <v-card-title>
-          Редактирование аккаунта #{{ editedAccount?.Id }}
+          Edit account #{{ editedAccount?.Id }}
         </v-card-title>
 
         <v-card-text>
@@ -134,10 +127,10 @@
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="editDialog = false">
-            Отмена
+            Cancel
           </v-btn>
           <v-btn color="primary" @click="saveAccount">
-            Сохранить
+            Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -157,14 +150,14 @@ const editDialog = ref(false)
 const editedAccount = ref(null)
 
 const headers = [
-  { title: 'ID', value: 'Id' },
-  { title: 'Name', value: 'Name' },
-  { title: 'Host', value: 'Host' },
-  { title: 'Username', value: 'Username' },
-  { title: 'IsEnabled', value: 'IsEnabled' },
-  { title: 'PausedToDate', value: 'PausedToDate' },
-  { title: 'AllowedRegions', value: 'AllowedRegions' },
-  { title: 'Действия', value: 'actions', sortable: false },
+  { title: 'ID', key: 'Id', maxWidth: "5vw" },
+  { title: 'Name', key: 'Name', maxWidth: "5vw"  },
+  { title: 'Host', key: 'Host', maxWidth: "5vw"  },
+  { title: 'Username', key: 'Username', maxWidth: "5vw"  },
+  { title: 'IsEnabled', key: 'IsEnabled' },
+  { title: 'PausedToDate', key: 'PausedToDate', maxWidth: "5vw"  },
+  { title: 'AllowedRegions', key: 'AllowedRegions' },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
 const fetchAccounts = async () => {
@@ -210,7 +203,7 @@ const toggleEnabled = async (item) => {
     .update({ IsEnabled: item.IsEnabled })
     .eq('Id', item.Id)
 
-  if (error) console.error('Ошибка обновления:', error)
+  if (error) console.error('Update error:', error)
 }
 
 // открыть модалку редактирования
@@ -224,6 +217,8 @@ const openEdit = (item) => {
   }
   editDialog.value = true
 }
+
+const sortBy = ref([{ key: 'Id', order: 'asc' }])
 
 // сохранить изменения в базу
 const saveAccount = async () => {
@@ -247,7 +242,7 @@ const saveAccount = async () => {
     .eq('Id', payload.Id)
 
   if (error) {
-    console.error('Ошибка обновления:', error)
+    console.error('Update error:', error)
     return
   }
 
@@ -264,5 +259,20 @@ const saveAccount = async () => {
 <style>
 .paused-row {
   background-color: #fff3cd !important; /* подсветка паузы */
+}
+.fixed-table .v-data-table__th,
+.fixed-table .v-data-table__td {
+  white-space: nowrap;         /* всё в одну строку */
+  text-overflow: ellipsis;     /* обрезаем ... */
+  overflow: hidden;
+}
+.fixed-table .col-Name,
+.fixed-table .col-Region,
+.fixed-table .col-RecipientSource {
+  width: 200px;
+}
+
+.fixed-table .col-BaseUrl {
+  max-width: 250px;
 }
 </style>

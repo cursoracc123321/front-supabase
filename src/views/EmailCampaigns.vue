@@ -6,7 +6,7 @@
         <v-col cols="12" md="4">
           <v-text-field
             v-model="filters.name"
-            label="Фильтр по Name"
+            label="Search by Name"
             clearable
           />
         </v-col>
@@ -15,7 +15,7 @@
           <v-select
             v-model="filters.region"
             :items="regions"
-            label="Фильтр по Region"
+            label="Filter by Region"
             item-title="title"
             item-value="value"
             multiple
@@ -28,7 +28,7 @@
           <v-select
             v-model="filters.status"
             :items="statuses"
-            label="Фильтр по Status"
+            label="Filter by Status"
             multiple
             chips
             clearable
@@ -74,19 +74,20 @@
 
     </v-card>
     <v-btn color="primary" class="mb-4" @click="dialogCreate = true">
-      Создать кампанию
+      Create Campaign
     </v-btn>
 
     <v-data-table
       :headers="headers"
       :items="filteredCampaigns"
       item-value="Id"
-      class="elevation-1"
+      class="elevation-1 fixed-table"
       :items-per-page-options="[
         { value: 10, title: '10' },
         { value: 25, title: '25' },
         { value: 50, title: '50' },
         { value: 100, title: '100' },]"
+        v-model:sort-by="sortBy"
     >
       <template #item.Status="{ item }">
         {{ statusLabels[item.Status] ?? item.Status }}
@@ -112,7 +113,7 @@
         />
       </template>
     </v-data-table>
-    <v-dialog v-model="dialogCreate" max-width="95%">
+    <v-dialog v-model="dialogCreate" max-width="50%" max-height="95%">
       <v-card>
         <v-btn
           icon="mdi-close"
@@ -123,7 +124,7 @@
           @click="dialogCreate = false"
         />
         <v-card-title class="text-h6">
-          Создать новую кампанию
+          Create new Campaign
         </v-card-title>
 
         <v-card-text>
@@ -131,27 +132,27 @@
 
             <v-card class="mt-6 pa-4">
               <v-card-title class="text-h6">
-                Создать новую кампанию
+                Create new Campaign
               </v-card-title>
 
               <v-card-text>
                 <v-form v-model="valid" @submit.prevent="createCampaign">
                   <v-text-field
-                    label="Название кампании (Name)"
+                    label="Campaign name"
                     v-model="form.Name"
                     :rules="[rules.required]"
                     required
                   />
 
                   <v-text-field
-                    label="Источник получателей (RecipientSource)"
+                    label="Recipient source"
                     v-model="form.RecipientSource"
                     :rules="[rules.required]"
                     required
                   />
 
                   <v-select
-                    label="Регион (Region)"
+                    label="Region"
                     :items="regions"
                     v-model="form.Region"
                     :rules="[rules.required]"
@@ -159,7 +160,7 @@
                   />
 
                   <v-text-field
-                    label="TotalToSend (общее кол-во писем)"
+                    label="Total to send"
                     v-model.number="form.TotalToSend"
                     type="number"
                     :rules="[rules.requiredNumber]"
@@ -167,7 +168,7 @@
                   />
 
                   <v-text-field
-                    label="DailyLimit (лимит в день)"
+                    label="Daily limit"
                     v-model.number="form.DailyLimit"
                     type="number"
                     :rules="[rules.requiredNumber]"
@@ -186,7 +187,7 @@
                   />
 
                   <v-text-field
-                    label="Status (например: 0 - delete, 1 - OK)"
+                    label="Status (for example: 0 - Draft, 1 - Scheduled)"
                     v-model.number="form.Status"
                     type="number"
                     :rules="[rules.requiredNumber]"
@@ -194,7 +195,7 @@
                   />
 
                   <v-text-field
-                    label="BaseUrl (опционально)"
+                    label="Base Url (optional)"
                     v-model="form.BaseUrl"
                   />
 
@@ -224,7 +225,7 @@
                             icon="mdi-plus"
                             variant="text"
                             @click.stop="addSubject(index)"
-                            title="Добавить Subject"
+                            title="Add subject"
                           />
                         </template>
 
@@ -237,7 +238,7 @@
                             variant="text"
                             color="red"
                             @click.stop="removeSubject(index)"
-                            title="Удалить Subject"
+                            title="Delete subject"
                           />
                         </template>
                       </v-textarea>
@@ -274,7 +275,7 @@
                               icon="mdi-plus"
                               variant="text"
                               @click.stop="addBody(index)"
-                              title="Добавить ещё Body"
+                              title="Add more Bodies"
                             />
                           </template>
 
@@ -287,7 +288,7 @@
                               variant="text"
                               color="red"
                               @click.stop="removeBody(index)"
-                              title="Удалить Body"
+                              title="Delete body"
                             />
                           </template>
                         </v-textarea>
@@ -300,31 +301,31 @@
                     <v-switch
                       v-model="form.OnlyDeliverable"
                       :color="form.OnlyDeliverable ? 'green' : 'grey'"
-                      label="OnlyDeliverable"
+                      label="Only deliverable"
                       class="mr-4"
                     />
                     <v-switch
                       v-model="form.OnlyNotSend"
                       :color="form.OnlyNotSend ? 'green' : 'grey'"
-                      label="OnlyNotSend"
+                      label="Only not send"
                       class="mr-4"
                     />
                     <v-switch
                       v-model="form.OnlyNotClicked"
                       :color="form.OnlyNotClicked ? 'green' : 'grey'"
-                      label="OnlyNotClicked"
+                      label="Only not clicked"
                       class="mr-4"
                     />
                     <v-switch
                       v-model="form.OnlyClicked"
                       :color="form.OnlyClicked ? 'green' : 'grey'"
-                      label="OnlyClicked"
+                      label="Only clicked"
                       class="mr-4"
                     />
                     <v-switch
                       v-model="form.DoubleOptIn"
                       :color="form.DoubleOptIn ? 'green' : 'grey'"
-                      label="DoubleOptIn"
+                      label="Double opt in"
                       class="mr-4"
                     />
                   </div>
@@ -334,7 +335,7 @@
                     color="primary"
                     class="mt-4"
                   >
-                    Создать кампанию
+                    Create campaign
                   </v-btn>
                 </v-form>
               </v-card-text>
@@ -343,10 +344,10 @@
         </v-card-text>
 
         <v-card-actions class="justify-end">
-          <v-btn variant="text" @click="dialogCreate = false">Отмена</v-btn>
+          <v-btn variant="text" @click="dialogCreate = false">Cancel</v-btn>
 
           <v-btn color="primary" :disabled="!valid" @click="createCampaign">
-            Создать
+            Create
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -363,7 +364,7 @@
         />
 
         <v-card-title class="text-h6 pr-12">
-          Детали кампании
+          Campaign details
         </v-card-title>
 
         <v-card-text v-if="selectedCampaign">
@@ -382,15 +383,15 @@
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title><strong>RecipientSource:</strong> {{ selectedCampaign.RecipientSource }}</v-list-item-title>
+              <v-list-item-title><strong>Recipient source:</strong> {{ selectedCampaign.RecipientSource }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title><strong>TotalToSend:</strong> {{ selectedCampaign.TotalToSend }}</v-list-item-title>
+              <v-list-item-title><strong>Total to send:</strong> {{ selectedCampaign.TotalToSend }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title><strong>DailyLimit:</strong> {{ selectedCampaign.DailyLimit }}</v-list-item-title>
+              <v-list-item-title><strong>Daily limit:</strong> {{ selectedCampaign.DailyLimit }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
@@ -398,15 +399,15 @@
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title><strong>StartDate:</strong> {{ formatDate(selectedCampaign.StartDate) }}</v-list-item-title>
+              <v-list-item-title><strong>Start date:</strong> {{ formatDate(selectedCampaign.StartDate) }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title><strong>EndDate:</strong> {{ formatDate(selectedCampaign.EndDate) }}</v-list-item-title>
+              <v-list-item-title><strong>End date:</strong> {{ formatDate(selectedCampaign.EndDate) }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title><strong>CreatedAt:</strong> {{ formatDate(selectedCampaign.CreatedAt) }}</v-list-item-title>
+              <v-list-item-title><strong>Created at:</strong> {{ formatDate(selectedCampaign.CreatedAt) }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
@@ -431,20 +432,16 @@
 
             <v-list-item>
               <v-list-item-title>
-                OnlyDeliverable: <strong>{{ selectedCampaign.OnlyDeliverable }}</strong><br />
-                OnlyNotSend: <strong>{{ selectedCampaign.OnlyNotSend }}</strong><br />
-                OnlyNotClicked: <strong>{{ selectedCampaign.OnlyNotClicked }}</strong><br />
-                OnlyClicked: <strong>{{ selectedCampaign.OnlyClicked }}</strong><br />
-                DoubleOptIn: <strong>{{ selectedCampaign.DoubleOptIn }}</strong>
+                Only deliverable: <strong>{{ selectedCampaign.OnlyDeliverable }}</strong><br />
+                Only not send: <strong>{{ selectedCampaign.OnlyNotSend }}</strong><br />
+                Only not clicked: <strong>{{ selectedCampaign.OnlyNotClicked }}</strong><br />
+                Only clicked: <strong>{{ selectedCampaign.OnlyClicked }}</strong><br />
+                Double opt in: <strong>{{ selectedCampaign.DoubleOptIn }}</strong>
               </v-list-item-title>
             </v-list-item>
 
           </v-list>
         </v-card-text>
-
-        <v-card-actions class="justify-end">
-          <v-btn variant="text" @click="dialogView = false">Закрыть</v-btn>
-        </v-card-actions>
       </v-card>
   </v-dialog>
 
@@ -470,32 +467,34 @@ const filters = ref({
 
 const regions = ['ua', 'ro', 'en'] // при необходимости дополни
 const statuses = [
-  { title: "Удалён", value: 0 },
-  { title: "ОК", value: 1 },
-  { title: "2", value: 2 },
-  { title: "3", value: 3 },
-  { title: "Черновик?", value: 4 },
+  { title: "Draft", value: 0 },
+  { title: "Scheduled", value: 1 },
+  { title: "Running", value: 2 },
+  { title: "Paused", value: 3 },
+  { title: "Completed", value: 4 },
+  {title: "Cancelled", value: 5},
 ]
 const statusLabels = {
-  0: "Удалён",
-  1: "ОК",
-  2: "2",
-  3: "3",
-  4: "Черновик?",
+  0: "Draft",
+  1: "Scheduled",
+  2: "Running",
+  3: "Paused",
+  4: "Completed",
+  5: "Cancelled",
 }
 
 const headers = [
-  { title: 'ID', value: 'Id' },
-  { title: 'Name', value: 'Name' },
-  { title: 'Region', value: 'Region' },
-  { title: 'RecipientSource', value: 'RecipientSource' },
-  { title: 'TotalToSend', value: 'TotalToSend' },
-  { title: 'DailyLimit', value: 'DailyLimit' },
-  { title: 'Status', value: 'Status' },
-  { title: 'StartDate', value: 'StartDate' },
-  { title: 'EndDate', value: 'EndDate' },
-  { title: 'CreatedAt', value: 'CreatedAt' },
-  { title: 'Действия', value: 'actions', sortable: false },
+  { title: 'ID', key: 'Id', maxWidth: "5vw" },
+  { title: 'Name', key: 'Name', maxWidth: "5vw" },
+  { title: 'Region', key: 'Region' },
+  { title: 'Recipient source', key: 'RecipientSource',  maxWidth: "5vw"  },
+  { title: 'Total to send', key: 'TotalToSend' },
+  { title: 'Daily limit', key: 'DailyLimit' },
+  { title: 'Status', key: 'Status' },
+  { title: 'Start date', key: 'StartDate' },
+  { title: 'End date', key: 'EndDate' },
+  { title: 'Created at', key: 'CreatedAt' },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
 const valid = ref(false)
@@ -527,9 +526,11 @@ const openDetails = (item) => {
   dialogView.value = true
 }
 
+const sortBy = ref([{ key: 'Id', order: 'asc' }])
+
 const rules = {
-  required: v => !!v || 'Обязательное поле',
-  requiredNumber: v => (v !== null && v !== '' && !isNaN(v)) || 'Укажите число',
+  required: v => !!v || 'Required field',
+  requiredNumber: v => (v !== null && v !== '' && !isNaN(v)) || 'Enter the number',
 }
 
 const toIsoOrNull = (value) => {
@@ -542,7 +543,7 @@ const toIsoOrNull = (value) => {
 const fetchCampaigns = async () => {
   const { data, error } = await supabase.from('EmailCampaigns').select('*')
   if (error) {
-    console.error('Ошибка загрузки кампаний:', error)
+    console.error('Error loading campaigns:', error)
   } else {
     campaigns.value = data
   }
@@ -615,8 +616,8 @@ const createCampaign = async () => {
   const startIso = toIsoOrNull(form.value.StartDate)
   const endIso = toIsoOrNull(form.value.EndDate)
 
-  if (!startIso) { alert('Укажите корректную StartDate'); return }
-  if (!endIso)  { alert('Укажите корректную EndDate');  return }
+  if (!startIso) { alert('Please enter a valid Start date.'); return }
+  if (!endIso)  { alert('Please enter a valid End date.');  return }
 
   const payload = {
     Name: form.value.Name,
@@ -657,7 +658,7 @@ const createCampaign = async () => {
   const { error } = await supabase.from('EmailCampaigns').insert(payload)
 
   if (error) {
-    console.error('Ошибка создания кампании:', error)
+    console.error('Error creating campaign:', error)
     return
   }
 
